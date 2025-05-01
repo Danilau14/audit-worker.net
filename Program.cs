@@ -9,6 +9,9 @@ builder.Services.ConfigureDbContext(builder.Configuration);
 builder.Services.Configure<RabbitMQSettings>(
     builder.Configuration.GetSection("RabbitMQSettings"));
 
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddTransient<IEmailService, EmailService>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IAuditRecordRepository, AuditRecordRepository>();

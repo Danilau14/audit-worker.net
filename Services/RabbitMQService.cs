@@ -80,10 +80,22 @@ public class RabbitMQService : IRabbitMQService
             try
             {
                 message = Encoding.UTF8.GetString(eventArgs.Body.ToArray());
-                var messageDto = JsonSerializer.Deserialize<MessageDto>(message);
-                if (messageDto != null)
+                if (queueName == null)
                 {
-                    await ProcessMessageAsync(messageDto);
+                    var messageDto = JsonSerializer.Deserialize<MessageDto>(message);
+                    if (messageDto != null)
+                    {
+                       await ProcessMessageAsync(messageDto);
+
+                    }
+                }
+                else
+                {
+                    var email = JsonSerializer.Deserialize<EmailForUserDto>(message);
+                    if(email != null)
+                    {
+                        await ProcessSendEmailAsync(email);
+                    }
                 }
 
                 await _channel.BasicAckAsync(eventArgs.DeliveryTag, multiple:false);
@@ -109,5 +121,18 @@ public class RabbitMQService : IRabbitMQService
         var auditService = scope.ServiceProvider.GetRequiredService<IAuditService>();
 
         await auditService.SaveAuditRecordAsync(message);
+    }
+
+    private async Task ProcessSendEmailAsync(EmailForUserDto email)
+    {
+        using var scope = _scopeFactory.CreateScope();
+
+        var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
+
+        await emailService.SendEmailAsync(
+                email.Email,
+                email.Subject,
+                email.Message
+            );
     }
 }

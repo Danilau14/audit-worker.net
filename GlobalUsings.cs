@@ -5,7 +5,6 @@ global using System.Diagnostics.CodeAnalysis;
 
 global using System.Net;
 global using System.Net.Mail;
-global using System.Security.Claims;
 global using System.Text;
 global using System.Text.Json;
 
@@ -26,6 +25,7 @@ global using RabbitMQ.Client.Events;
 
 // ParkingApi - Data, Models, DTOs, Mappings, Repositories, Services, Interfaces
 global using AuditWorker.Data;
+global using AuditWorker.DTOs.Email;
 global using AuditWorker.DTOs.QueueMessage;
 global using AuditWorker.Enums;
 global using AuditWorker.Extensions;
